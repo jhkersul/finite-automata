@@ -27,6 +27,6 @@ defmodule TapeTest do
   test "should return the content of a tape" do
     tape = Tape.init(["$", "h"], ["l", "o", "$"])
 
-    Tape.contents(tape) == tape
+    assert Tape.contents(tape) == tape
   end
 end
