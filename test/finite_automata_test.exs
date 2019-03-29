@@ -46,9 +46,9 @@ defmodule FiniteAutomataTest do
     initial_state = "q0"
     accept_states = ["q1"]
     automata = FiniteAutomata.init_automata(transitions, initial_state, accept_states)
-    new_states = ["q1"]
+    new_state = "q1"
 
-    assert FiniteAutomata.update_automata(automata, new_states).current_state == "q1"
+    assert FiniteAutomata.update_automata(automata, new_state).current_state == "q1"
   end
 
   test "should validate accept state" do
@@ -84,5 +84,18 @@ defmodule FiniteAutomataTest do
     tape = FiniteAutomata.get_tape(["a", "b"])
 
     assert FiniteAutomata.run_acceptor(automata, tape) == :false
+  end
+
+  test "should run acceptor valid input non-deterministic" do
+    transitions = %{
+      "q0" => [{"a", "q0"}, {"b", "q1"}, {"a", "q1"}],
+      "q1" => [{"a", "q2"}]
+    }
+    initial_state = "q0"
+    accept_states = ["q2"]
+    automata = FiniteAutomata.init_automata(transitions, initial_state, accept_states)
+    tape = FiniteAutomata.get_tape(["a", "a"])
+
+    assert FiniteAutomata.run_acceptor(automata, tape) == :true
   end
 end

@@ -28,15 +28,10 @@ defmodule FiniteAutomata do
       |> Enum.map(fn {_elem, state} -> state end)
   end
 
-  def update_automata(automata, new_states) do
-    # If theres no new_states, just return the automata
-    if length(new_states) == 0 do
-      automata
-    else
-      # Setting new state
-      automata
-        |> Map.put(:current_state, List.first(new_states))
-    end
+  def update_automata(automata, new_state) do
+    # Setting new state
+    automata
+      |> Map.put(:current_state, new_state)
   end
 
   def accept_state?(automata) do
@@ -52,10 +47,14 @@ defmodule FiniteAutomata do
       new_states = get_new_states(automata, tape)
       # Reconfig tape
       new_tape = Tape.reconfig(tape)
-      # Updating automata
-      new_automata = update_automata(automata, new_states)
-      # Calling run_acceptor again with updated data
-      run_acceptor(new_automata, new_tape)
+      # For each one of the possible states, we create a new automata and run acceptor
+      new_states
+        |> Enum.any?(fn new_state ->
+          # Updating automata
+          new_automata = update_automata(automata, new_state)
+          # Calling run_acceptor again with updated data
+          run_acceptor(new_automata, new_tape)
+        end)
     end
   end
 end
